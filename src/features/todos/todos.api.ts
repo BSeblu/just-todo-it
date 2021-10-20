@@ -1,44 +1,22 @@
 import { Todo } from './todos.model'
-
-// Utilities
-function wait(ms: number)
-{
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+import { delay } from '../../app/utilities'
 
 /**
- * delays the function execution, e.g. to simulate network latency
- * @param produceValue function to produce the value
- * @returns the produced value
+ * Provides access to the todos api. At this time, this is rather an in-memory mock backend.
+ * It uses local state, so each call to the function uses its own copy of the data.
+ * @returns methods to access the todos api
  */
-async function delay<T>(produceValue: () => T) {
-await wait(0);
-  return produceValue();
-}
-
-
-let todos: Todo[];
-
-export function initTodos() {
-  todos = [
+export function useTodosApi() {
+  let todos: Todo[] = [
     { id: "001", title: "Do This", description: "BlaBlaBla", state: 'Done' },
     { id: "002", title: "Do That", state: 'InProgress'},
     { id: "003", title: "Repeat", state: 'Todo'}
   ];
-}
 
-export async function loadTodos() {
-  return delay(() => todos);
-}
-
-export async function addTodo(todo: Todo) {
-  return delay(() => todos = [...todos, todo ]);
-}
-
-export async function removeTodo(id: string) {
-  return delay(() => todos = todos.filter(t => t.id !== id))
-}
-
-export async function patchTodo(id: string, patch: Partial<Todo>) {
-  return delay(() => todos = todos.map(t => t.id === id ? { ...t, ...patch} : t));
+  return {
+    loadTodos: async () => delay(() => todos),
+    addTodo: async (todo: Todo) => delay(() => todos = [...todos, todo ]),
+    removeTodo: async (id: string) => delay(() => todos = todos.filter(t => t.id !== id)),
+    patchTodo: async (id: string, patch: Partial<Todo>) => delay(() => todos = todos.map(t => t.id == id ? { ...t, ...patch } : t))
+  }
 }
