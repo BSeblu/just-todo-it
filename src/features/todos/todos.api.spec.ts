@@ -15,7 +15,13 @@ describe('todos api', () => {
     await api.addTodo({ id: "004", title: "new todo", state: 'Todo' });
     let todos = await api.loadTodos();
     expect(todos.length).toBe(4);
-  })
+  });
+
+  it ('removeTodo', async () => {
+    await api.removeTodo("001");
+    let todos = await api.loadTodos();
+    expect(todos.length).toBe(2);
+  });
   
   it('patchTodo should change the items', async () => {
     await api.addTodo({ id: "004", title: "new todo", state: 'Todo' });
